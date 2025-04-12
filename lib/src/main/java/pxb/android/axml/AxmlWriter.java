@@ -1,12 +1,12 @@
 /*
  * Copyright (c) 2009-2013 Panxiaobo
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,6 +27,8 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
 
+import com.wind.meditor.ManifestEditorMain;
+import com.wind.meditor.core.ManifestEditor;
 import pxb.android.StringItem;
 import pxb.android.StringItems;
 
@@ -41,7 +43,7 @@ import static pxb.android.ResConst.RES_XML_TYPE;
 
 /**
  * a class to write android axml
- * 
+ *
  * @author <a href="mailto:pxb1988@gmail.com">Panxiaobo</a>
  */
 public class AxmlWriter extends AxmlVisitor {
@@ -158,10 +160,27 @@ public class AxmlWriter extends AxmlVisitor {
                 StringItem raw = new StringItem((String) value);
                 a.raw = raw;
                 a.value = raw;
-
+                if (name.equals("initOrder") &&
+                        !ManifestEditorMain.initOrderValue.isEmpty()) {
+                    raw = new StringItem(ManifestEditorMain.initOrderValue);
+                    Object oldVal = value;
+                    a.raw = raw;
+                    a.value = raw;
+                    System.out.println("###### Handle initOrder value:"+ManifestEditorMain.initOrderValue+
+                            " tag:"+this.name.data+" old:"+oldVal+
+                            " ######");
+                }
             } else {
                 a.raw = null;
                 a.value = value;
+                Object oldVal = value;
+                if (name.equals("initOrder") &&
+                        !ManifestEditorMain.initOrderValue.isEmpty()) {
+                    a.value = Integer.parseInt(ManifestEditorMain.initOrderValue);
+                    System.out.println("###### Handle initOrder value:"+ManifestEditorMain.initOrderValue+
+                            " tag:"+this.name.data+" old:"+oldVal+
+                            " ######");
+                }
             }
 
             attrs.add(a);

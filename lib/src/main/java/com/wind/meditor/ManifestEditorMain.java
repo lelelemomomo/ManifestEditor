@@ -19,6 +19,9 @@ import java.util.List;
  */
 public class ManifestEditorMain extends BaseCommand {
 
+
+    public static String initOrderValue = "";
+
     private static final String MULTI_NAME_SEPERATER = ":";
     private static final String ANDROID_NAMESPACE = "android-";
 
@@ -153,7 +156,12 @@ public class ManifestEditorMain extends BaseCommand {
         Log.i("output file path --> " + output);
 
         ModificationProperty modificationProperty = composeProperty();
-
+        if (modificationProperty.getApplicationAttributeList() != null && !modificationProperty.getApplicationAttributeList().isEmpty()) {
+            if (modificationProperty.getApplicationAttributeList().get(0).getName().equals("initOrder")) {
+                initOrderValue =(String) modificationProperty.getApplicationAttributeList().get(0).getValue();
+                System.out.println("###### Global initOrder value:"+initOrderValue+" ######");
+            }
+        }
         if (isMainfestFile) {
             Log.i("Start to process manifest file ");
             FileProcesser.processManifestFile(srcFilePath, output, modificationProperty);
