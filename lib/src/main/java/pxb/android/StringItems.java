@@ -1,12 +1,12 @@
 /*
  * Copyright (c) 2009-2013 Panxiaobo
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,7 +27,7 @@ import java.util.Map;
 public class StringItems extends ArrayList<StringItem> {
 	private static final int UTF8_FLAG = 0x00000100;
 
-	
+
     public static String[] read(ByteBuffer in) throws IOException {
         int trunkOffset = in.position() - 8;
         int stringCount = in.getInt();
@@ -43,7 +43,14 @@ public class StringItems extends ArrayList<StringItem> {
 
         int base = trunkOffset + stringDataOffset;
         for (int i = 0; i < offsets.length; i++) {
-			((Buffer)in).position(base + offsets[i]);
+			int newPosition = base + offsets[i];
+			if (newPosition > in.limit()) {
+				String newStrings[] = new String[i];
+				System.arraycopy(strings, 0, newStrings, 0, i);
+				strings = newStrings;
+				break;
+			}
+			((Buffer) in).position(newPosition);
             String s;
 
             if (0 != (flags & UTF8_FLAG)) {
